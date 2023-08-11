@@ -1,6 +1,8 @@
 package sg.edu.rp.c346.id22022505.anightatthemovies;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Movie;
 import android.os.Bundle;
@@ -56,10 +58,51 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DBHelper db = new DBHelper(EditActivity.this);
-                db.deleteMovie(data.getId());
-                finish();
+
+                AlertDialog.Builder myBuilder = new AlertDialog.Builder(EditActivity.this);
+                myBuilder.setTitle("Delete movie?");
+                myBuilder.setMessage("Are you sure you want to delete the movie, " + etTitle.getText());
+                myBuilder.setCancelable(false);
+
+                myBuilder.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(EditActivity.this);
+                        confirmBuilder.setTitle("Confirm delete");
+                        confirmBuilder.setMessage("Do you want to discard the movie?");
+                        confirmBuilder.setCancelable(false);
+
+                        confirmBuilder.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Perform discard action here
+                                db.deleteMovie(data.getId());
+                                finish();
+                            }
+                        });
+
+                        confirmBuilder.setNegativeButton("Do Not Discard", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Perform "Do Not Discard" action here
+                            }
+                        });
+
+                        confirmBuilder.show();
+                    }
+                });
+
+                myBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                myBuilder.show();
             }
         });
+
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
